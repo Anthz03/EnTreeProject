@@ -1,0 +1,115 @@
+{% extends 'core/base.html' %}
+{% block content %}
+
+<h3 class="fw-bold mb-4"><i class="bi bi-person-circle"></i> My Profile</h3>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card p-4">
+            <h5 class="mb-3"><i class="bi bi-card-text"></i> Personal Information</h5>
+            <form method="post" action="{% url 'update_profile' %}">
+                {% csrf_token %}
+                <input type="hidden" name="education_id" value="{{ profile.education_id }}">
+                <div class="row g-2">
+                    <div class="col-6">
+                        <label class="form-label small text-muted">First Name</label>
+                        <input type="text" name="first_name" class="form-control" value="{{ profile.first_name }}">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label small text-muted">Last Name</label>
+                        <input type="text" name="last_name" class="form-control" value="{{ profile.last_name }}">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label small text-muted">Middle Name</label>
+                        <input type="text" name="middle_name" class="form-control" value="{{ profile.middle_name }}">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label small text-muted">Birthdate</label>
+                        <input type="date" name="birthdate" class="form-control" value="{{ profile.birthdate|date:'Y-m-d' }}">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label small text-muted">Gender</label>
+                        <input type="text" name="gender" class="form-control" value="{{ profile.gender }}">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label small text-muted">Contact Number</label>
+                        <input type="text" name="contact_number" class="form-control" value="{{ profile.contact_number }}">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label small text-muted">Status</label>
+                        <input type="text" name="profile_status" class="form-control" value="{{ profile.profile_status }}">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label small text-muted">Email</label>
+                        <input type="email" name="email" class="form-control" value="{{ profile.email }}">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label small text-muted">Address</label>
+                        <input type="text" name="address" class="form-control" value="{{ profile.address }}">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label small text-muted">Password</label>
+                        <input type="password" name="password" class="form-control" value="{{ profile.password }}">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-success mt-3"><i class="bi bi-save"></i> Save Changes</button>
+            </form>
+            <form method="post" action="{% url 'delete_profile' %}" class="mt-2" onsubmit="return confirm('Delete this profile permanently?');">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-danger btn-sm mt-2"><i class="bi bi-trash"></i> Delete My Profile</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card p-4 mb-4">
+            <h5 class="mb-3"><i class="bi bi-lightning-charge"></i> My Skills</h5>
+            {% for s in skills %}
+            <div class="border-bottom py-2">
+                <div class="d-flex justify-content-between">
+                    <strong>{{ s.skill_name }}</strong>
+                    <span class="badge bg-light text-dark border">{{ s.skill_type }}</span>
+                </div>
+                <p class="text-muted small mb-0">{{ s.description }}</p>
+            </div>
+            {% empty %}
+            <p class="text-muted">No skills recorded.</p>
+            {% endfor %}
+        </div>
+
+        <div class="card p-4 mb-4">
+            <h5 class="mb-3"><i class="bi bi-patch-check"></i> Add TESDA Certification</h5>
+            <form method="post" action="{% url 'add_certification' %}">
+                {% csrf_token %}
+                <input type="text" name="qualification_title" class="form-control mb-2" placeholder="Qualification Title" required>
+                <input type="text" name="nc_level" class="form-control mb-2" placeholder="NC Level">
+                <div class="row g-2 mb-2">
+                    <div class="col-6"><input type="date" name="date_issued" class="form-control"></div>
+                    <div class="col-6"><input type="date" name="expiry_date" class="form-control"></div>
+                </div>
+                <input type="text" name="issuing_body" class="form-control mb-2" placeholder="Issuing Body">
+                <input type="text" name="certificate_number" class="form-control mb-2" placeholder="Certificate Number">
+                <button type="submit" class="btn btn-success btn-sm w-100"><i class="bi bi-plus-lg"></i> Add Certification</button>
+            </form>
+        </div>
+
+        <div class="card p-4">
+            <h5 class="mb-3"><i class="bi bi-award"></i> My TESDA Certifications</h5>
+            {% for c in certifications %}
+            <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                <div>
+                    <strong>{{ c.qualification_title }}</strong>
+                    <p class="text-muted small mb-0">{{ c.nc_level }} &middot; {{ c.certificate_number }}</p>
+                </div>
+                <form method="post" action="{% url 'delete_certification' c.cert_id %}" onsubmit="return confirm('Delete this certification?');">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i></button>
+                </form>
+            </div>
+            {% empty %}
+            <p class="text-muted">No certifications added yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'core/base.html' %}
+{% block content %}
+
+<a href="{% url 'jobs_page' %}" class="text-muted small"><i class="bi bi-arrow-left"></i> Back to Jobs</a>
+
+<div class="card p-4 mt-3 mb-4">
+    <h3 class="fw-bold mb-1">Skill Match — Job #{{ job_id }}</h3>
+    {% if summary %}
+    <div class="d-flex align-items-center gap-2 mt-2">
+        <span class="badge bg-success rounded-pill px-3 py-2" style="font-size: 0.95rem;">
+            {{ summary.TotalMatchedSkills }} skill{{ summary.TotalMatchedSkills|pluralize }} matched
+        </span>
+    </div>
+    {% endif %}
+</div>
+
+<div class="row g-3">
+    {% for s in skills %}
+    <div class="col-md-6">
+        <div class="card p-3 d-flex flex-row justify-content-between align-items-center
+            {% if s.MatchStatus == 'Matched' %}border-start border-4 border-success{% else %}border-start border-4 border-secondary{% endif %}">
+            <div>
+                <h6 class="mb-1">{{ s.skill_name }}</h6>
+                <p class="text-muted small mb-0">{{ s.skill_type }} &middot; {{ s.is_required }}</p>
+            </div>
+            {% if s.MatchStatus == 'Matched' %}
+                <span class="badge bg-success rounded-pill px-3 py-2"><i class="bi bi-check-lg"></i> Matched</span>
+            {% else %}
+                <span class="badge bg-secondary rounded-pill px-3 py-2"><i class="bi bi-dash-circle"></i> Missing</span>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-muted">No skill requirements found for this job.</p>
+    {% endfor %}
+</div>
+{% endblock %}
