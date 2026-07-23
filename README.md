@@ -102,13 +102,64 @@ Use any pre-seeded applicant from the database, for example:
 | jed.engbino@email.com | jedlawrence123 |
 
 ## Project Structure
+
+```
 EnTreeProject/
-├── entree_config/ # Django project settings, root URLs
+├── entree_config/
+│   ├── __init__.py
+│   ├── settings.py          # Django settings, MSSQL database config
+│   ├── urls.py              # Root URL routing (includes core.urls)
+│   ├── asgi.py
+│   └── wsgi.py
+│
 ├── core/
-│ ├── models.py # Unmanaged models mirroring existing SQL tables
-│ ├── db_utils.py # All stored procedure / view / function calls
-│ ├── views.py # Request handling, session management
-│ ├── urls.py # App-level routes
-│ └── templates/core/ # HTML templates (Bootstrap-styled)
-├── manage.py
-└── requirements.txt
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── models.py            # Unmanaged models mirroring existing SQL tables
+│   ├── db_utils.py          # All stored procedure / view / function calls
+│   ├── views.py             # Request handling, session management
+│   ├── urls.py              # App-level routes
+│   ├── tests.py
+│   │
+│   ├── migrations/
+│   │   └── __init__.py
+│   │
+│   └── templates/
+│       └── core/
+│           ├── base.html             # Shared layout, navbar, messages
+│           ├── login.html            # Login form (calls uspLogin)
+│           ├── jobs_page.html        # Jobs list (vwJobPostings + udfFilterJobPostings)
+│           ├── matches_page.html     # Text-based matches (uspMatchJobsByDescription)
+│           ├── match_detail.html     # Skill breakdown per job (uspViewMatchingSkills)
+│           └── profile_dashboard.html # Profile + skills + TESDA certs
+│
+├── .venv/                   # Virtual environment (gitignored)
+├── .idea/                   # PyCharm project settings (gitignored)
+├── .gitignore
+├── manage.py                # Django's command-line utility
+├── requirements.txt         # Python package dependencies
+└── README.md                # Setup instructions (this file)
+```
+
+## Database Objects Used
+| Feature | SQL Object | Type |
+|---|---|---|
+| Login | `uspLogin` | Stored Procedure w/ Transaction |
+| Login Audit | `trg_AfterInsert_LoginAttempts` | Trigger |
+| Jobs Page | `vwJobPostings` | View |
+| Salary/Industry Filter | `udfFilterJobPostings` | Inline Table-Valued Function |
+| Create Job Post | `uspCreateJobPost` | Stored Procedure w/ Transaction |
+| Skill Match Detail | `uspViewMatchingSkills` | Stored Procedure |
+| Text-Based Job Matching | `uspMatchJobsByDescription` | Stored Procedure |
+| Add/Update/Delete Applicant | `uspInsertApplicant`, `uspUpdateApplicant`, `uspDeleteApplicant` | Stored Procedures w/ Transaction |
+| Add/Update/Delete TESDA Cert | `uspInsertTESDACertificate`, `uspUpdateTESDACertificate`, `uspDeleteTESDACertificate` | Stored Procedures w/ Transaction |
+
+## Notes / Known Scope Limitations
+- Registration is not exposed in the client app — applicants are pre-seeded directly in the database.
+- Job Application (Apply function) is excluded from this phase; the study concludes at the Matching Engine.
+- Account lockout after repeated failed login attempts is intentionally excluded (documented as future work).
+
+## Team
+CHIU, APRIL ABEGAIL B. · ESPIRITU, JOSIAH · MAGALONA, KYLE ANTHONY T. · MAMAUAG, KARL DAVID M.
+De La Salle–College of Saint Benilde — INFODBM Final Project
