@@ -102,3 +102,13 @@ Use any pre-seeded applicant from the database, for example:
 | jed.engbino@email.com | jedlawrence123 |
 
 ## Project Structure
+EnTreeProject/
+├── entree_config/ # Django project settings, root URLs
+├── core/
+│ ├── models.py # Unmanaged models mirroring existing SQL tables
+│ ├── db_utils.py # All stored procedure / view / function calls
+│ ├── views.py # Request handling, session management
+│ ├── urls.py # App-level routes
+│ └── templates/core/ # HTML templates (Bootstrap-styled)
+├── manage.py
+└── requirements.txt
