@@ -83,7 +83,7 @@ def profile_dashboard(request):
 def update_profile(request):
     if request.method == 'POST':
         applicant_id = request.session['applicant_id']
-        db_utils.update_applicant(
+        result = db_utils.update_applicant(
             applicant_id,
             request.POST.get('education_id') or None,
             request.POST.get('first_name'), request.POST.get('last_name'),
@@ -93,7 +93,10 @@ def update_profile(request):
             request.POST.get('profile_status', 'Active'),
             request.POST.get('password'),
         )
-        messages.success(request, "Profile updated.")
+        if result and result.get('ResultStatus') == 'Success':
+            messages.success(request, "Profile updated.")
+        else:
+            messages.error(request, (result or {}).get('ErrorDetail', 'Profile update failed.'))
     return redirect('profile_dashboard')
 
 
@@ -105,8 +108,60 @@ def delete_profile(request):
     return redirect('login')
 
 
+# Applicant Skills: Add / Edit / Delete -----------------------------------
+
 @login_required_applicant
-def add_certification(request):
+def add_skill_view(request):
+    applicant_id = request.session['applicant_id']
+
+    if request.method == 'POST':
+        skill_id = request.POST.get('skill_id')
+        description = request.POST.get('description')
+        result = db_utils.insert_applicant_skill(applicant_id, skill_id, description)
+        if result and result.get('ResultStatus') == 'Success':
+            messages.success(request, "Skill added.")
+        else:
+            messages.error(request, (result or {}).get('ErrorDetail', 'Could not add skill.'))
+        return redirect('profile_dashboard')
+
+    all_skills = db_utils.get_all_skills()
+    return render(request, 'core/skill_form.html', {
+        'mode': 'add',
+        'all_skills': all_skills,
+        'skill_record': None,
+    })
+
+
+@login_required_applicant
+def edit_skill_view(request, applicant_skill_id):
+    if request.method == 'POST':
+        description = request.POST.get('description')
+        result = db_utils.update_applicant_skill(applicant_skill_id, description)
+        if result and result.get('ResultStatus') == 'Success':
+            messages.success(request, "Skill updated.")
+        else:
+            messages.error(request, (result or {}).get('ErrorDetail', 'Could not update skill.'))
+        return redirect('profile_dashboard')
+
+    skill_record = db_utils.get_applicant_skill_detail(applicant_skill_id)
+    return render(request, 'core/skill_form.html', {
+        'mode': 'edit',
+        'all_skills': None,
+        'skill_record': skill_record,
+    })
+
+
+@login_required_applicant
+def delete_skill_view(request, applicant_skill_id):
+    db_utils.delete_applicant_skill(applicant_skill_id)
+    messages.info(request, "Skill removed.")
+    return redirect('profile_dashboard')
+
+
+# TESDA Certifications: Add / Edit / Delete --------------------------------
+
+@login_required_applicant
+def add_certification_view(request):
     if request.method == 'POST':
         applicant_id = request.session['applicant_id']
         db_utils.insert_tesda_certificate(
@@ -119,11 +174,16 @@ def add_certification(request):
             request.POST.get('certificate_number'),
         )
         messages.success(request, "Certification added.")
-    return redirect('profile_dashboard')
+        return redirect('profile_dashboard')
+
+    return render(request, 'core/certification_form.html', {
+        'mode': 'add',
+        'cert_record': None,
+    })
 
 
 @login_required_applicant
-def update_certification(request, cert_id):
+def edit_certification_view(request, cert_id):
     if request.method == 'POST':
         db_utils.update_tesda_certificate(
             cert_id,
@@ -135,7 +195,13 @@ def update_certification(request, cert_id):
             request.POST.get('certificate_number'),
         )
         messages.success(request, "Certification updated.")
-    return redirect('profile_dashboard')
+        return redirect('profile_dashboard')
+
+    cert_record = db_utils.get_tesda_certificate_detail(cert_id)
+    return render(request, 'core/certification_form.html', {
+        'mode': 'edit',
+        'cert_record': cert_record,
+    })
 
 
 @login_required_applicant

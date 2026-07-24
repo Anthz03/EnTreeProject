@@ -12,7 +12,12 @@ urlpatterns = [
     path('profile/', views.profile_dashboard, name='profile_dashboard'),
     path('profile/update/', views.update_profile, name='update_profile'),
     path('profile/delete/', views.delete_profile, name='delete_profile'),
-    path('profile/certifications/add/', views.add_certification, name='add_certification'),
-    path('profile/certifications/<int:cert_id>/update/', views.update_certification, name='update_certification'),
+
+    path('profile/certifications/add/', views.add_certification_view, name='add_certification'),
+    path('profile/certifications/<int:cert_id>/edit/', views.edit_certification_view, name='edit_certification'),
     path('profile/certifications/<int:cert_id>/delete/', views.delete_certification, name='delete_certification'),
+
+    path('profile/skills/add/', views.add_skill_view, name='add_skill'),
+    path('profile/skills/<int:applicant_skill_id>/edit/', views.edit_skill_view, name='edit_skill'),
+    path('profile/skills/<int:applicant_skill_id>/delete/', views.delete_skill_view, name='delete_skill'),
 ]

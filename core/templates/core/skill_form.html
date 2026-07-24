@@ -1,0 +1,53 @@
+{% extends 'core/base.html' %}
+{% block content %}
+
+<div class="card p-4 p-md-5">
+    <h4 class="fw-bold mb-1">
+        {% if mode == 'add' %}Add a Skill{% else %}Edit Skill{% endif %}
+    </h4>
+    <p class="text-muted small mb-4">
+        {% if mode == 'add' %}
+            Choose a skill and describe your experience with it.
+        {% else %}
+            Update how you describe your experience with this skill.
+        {% endif %}
+    </p>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label class="form-label small text-muted">Skill</label>
+            {% if mode == 'add' %}
+                <select name="skill_id" class="form-select" required>
+                    <option value="" disabled selected>Select a skill...</option>
+                    {% for sk in all_skills %}
+                    <option value="{{ sk.skill_id }}">{{ sk.skill_name }} ({{ sk.category }})</option>
+                    {% endfor %}
+                </select>
+            {% else %}
+                <input type="text" class="form-control bg-light" value="{{ skill_record.skill_name }}" disabled>
+            {% endif %}
+        </div>
+
+        <div class="mb-4">
+            <label class="form-label small text-muted">Description</label>
+            <textarea
+                name="description"
+                class="form-control w-100"
+                style="min-height: 220px; resize: vertical;"
+                placeholder="Describe your experience with this skill"
+            >{% if mode == 'edit' %}{{ skill_record.description }}{% endif %}</textarea>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center">
+            <a href="{% url 'profile_dashboard' %}" class="text-muted small">
+                <i class="bi bi-arrow-left"></i> Back to Profile
+            </a>
+            <button type="submit" class="btn btn-success px-4">
+                <i class="bi bi-check-lg"></i> Done
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

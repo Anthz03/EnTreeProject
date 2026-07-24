@@ -96,17 +96,6 @@ def match_jobs_by_description(applicant_id):
 
 # 3. Profile Management Dashboard ---------------------------------------
 
-def insert_applicant(education_id, first_name, last_name, middle_name, birthdate,
-                      gender, contact_number, email, address, profile_status, password):
-    """EXEC uspInsertApplicant"""
-    with connection.cursor() as cursor:
-        cursor.execute(
-            "EXEC uspInsertApplicant %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s",
-            [education_id, first_name, last_name, middle_name, birthdate,
-             gender, contact_number, email, address, profile_status, password]
-        )
-
-
 def update_applicant(applicant_id, education_id, first_name, last_name, middle_name,
                       birthdate, gender, contact_number, email, address,
                       profile_status, password):
@@ -118,12 +107,43 @@ def update_applicant(applicant_id, education_id, first_name, last_name, middle_n
              birthdate, gender, contact_number, email, address,
              profile_status, password]
         )
+        return _dictfetchone(cursor)
 
 
-def delete_applicant(applicant_id):
-    """EXEC uspDeleteApplicant"""
+def insert_applicant_skill(applicant_id, skill_id, description):
+    """EXEC usp_ManageApplicantSkill @Action='INSERT'"""
     with connection.cursor() as cursor:
-        cursor.execute("EXEC uspDeleteApplicant %s", [applicant_id])
+        cursor.execute(
+            """
+            EXEC usp_ManageApplicantSkill
+                @Action='INSERT', @ApplicantID=%s, @SkillID=%s, @Description=%s
+            """,
+            [applicant_id, skill_id, description]
+        )
+        return _dictfetchone(cursor)
+
+
+def update_applicant_skill(applicant_skill_id, description):
+    """EXEC usp_ManageApplicantSkill @Action='UPDATE'"""
+    with connection.cursor() as cursor:
+        cursor.execute(
+            """
+            EXEC usp_ManageApplicantSkill
+                @Action='UPDATE', @ApplicantSkillID=%s, @Description=%s
+            """,
+            [applicant_skill_id, description]
+        )
+        return _dictfetchone(cursor)
+
+
+def delete_applicant_skill(applicant_skill_id):
+    """EXEC usp_ManageApplicantSkill @Action='DELETE'"""
+    with connection.cursor() as cursor:
+        cursor.execute(
+            "EXEC usp_ManageApplicantSkill @Action='DELETE', @ApplicantSkillID=%s",
+            [applicant_skill_id]
+        )
+        return _dictfetchone(cursor)
 
 
 def get_applicant_profile(applicant_id):
@@ -152,34 +172,68 @@ def get_all_skills():
         return _dictfetchall(cursor)
 
 
+def get_applicant_skill_detail(applicant_skill_id):
+    """EXEC usp_GetApplicantSkillDetail -- pre-fills the Edit Skill page."""
+    with connection.cursor() as cursor:
+        cursor.execute(
+            "EXEC usp_GetApplicantSkillDetail @ApplicantSkillID=%s",
+            [applicant_skill_id]
+        )
+        return _dictfetchone(cursor)
+
+
 # TESDA Certifications ---------------------------------------------------
+
+def get_tesda_certificate_detail(cert_id):
+    """EXEC usp_GetTesdaCertificationDetail -- pre-fills the Edit Certificate page."""
+    with connection.cursor() as cursor:
+        cursor.execute(
+            "EXEC usp_GetTesdaCertificationDetail @CertID=%s",
+            [cert_id]
+        )
+        return _dictfetchone(cursor)
+
 
 def insert_tesda_certificate(applicant_id, qualification_title, nc_level,
                               date_issued, expiry_date, issuing_body, certificate_number):
-    """EXEC uspInsertTESDACertificate"""
+    """EXEC usp_ManageTesdaCertification @Action='INSERT'"""
     with connection.cursor() as cursor:
         cursor.execute(
-            "EXEC uspInsertTESDACertificate %s, %s, %s, %s, %s, %s, %s",
+            """
+            EXEC usp_ManageTesdaCertification
+                @Action='INSERT', @ApplicantID=%s, @QualificationTitle=%s, @NCLevel=%s,
+                @DateIssued=%s, @ExpiryDate=%s, @IssuingBody=%s, @CertificateNumber=%s
+            """,
             [applicant_id, qualification_title, nc_level, date_issued,
              expiry_date, issuing_body, certificate_number]
         )
+        return _dictfetchone(cursor)
 
 
 def update_tesda_certificate(cert_id, qualification_title, nc_level,
                               date_issued, expiry_date, issuing_body, certificate_number):
-    """EXEC uspUpdateTESDACertificate"""
+    """EXEC usp_ManageTesdaCertification @Action='UPDATE'"""
     with connection.cursor() as cursor:
         cursor.execute(
-            "EXEC uspUpdateTESDACertificate %s, %s, %s, %s, %s, %s, %s",
+            """
+            EXEC usp_ManageTesdaCertification
+                @Action='UPDATE', @CertID=%s, @QualificationTitle=%s, @NCLevel=%s,
+                @DateIssued=%s, @ExpiryDate=%s, @IssuingBody=%s, @CertificateNumber=%s
+            """,
             [cert_id, qualification_title, nc_level, date_issued,
              expiry_date, issuing_body, certificate_number]
         )
+        return _dictfetchone(cursor)
 
 
 def delete_tesda_certificate(cert_id):
-    """EXEC uspDeleteTESDACertificate"""
+    """EXEC usp_ManageTesdaCertification @Action='DELETE'"""
     with connection.cursor() as cursor:
-        cursor.execute("EXEC uspDeleteTESDACertificate %s", [cert_id])
+        cursor.execute(
+            "EXEC usp_ManageTesdaCertification @Action='DELETE', @CertID=%s",
+            [cert_id]
+        )
+        return _dictfetchone(cursor)
 
 
 def get_applicant_certifications(applicant_id):
