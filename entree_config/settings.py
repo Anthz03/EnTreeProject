@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+from django.contrib.messages import constants as messages
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -28,6 +29,15 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'secondary',
+    messages.INFO: 'info',
+    messages.SUCCESS: 'success',
+    messages.WARNING: 'warning',
+    messages.ERROR: 'danger',   # <-- this is the key fix
+}
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -38,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'core',
+
 ]
 
 MIDDLEWARE = [
@@ -72,8 +83,8 @@ WSGI_APPLICATION = 'entree_config.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
-# kyle database
 
+# kyle database
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'mssql',
@@ -85,21 +96,22 @@ WSGI_APPLICATION = 'entree_config.wsgi.application'
 #         },
 #     },
 # }
+
 # abby database
-DATABASES = {
-    'default': {
-        'ENGINE': 'mssql',
-        'NAME': 'EnTreeDB_Finals',
-        'USER': 'sa',
-        'PASSWORD': '010611',
-        'HOST': 'localhost',
-        'PORT': '1433',
-        'OPTIONS': {
-            'driver': 'ODBC Driver 17 for SQL Server',
-            'extra_params': 'TrustServerCertificate=yes;',
-        },
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'mssql',
+#         'NAME': 'EnTreeDB_Finals',
+#         'USER': 'sa',
+#         'PASSWORD': '010611',
+#         'HOST': 'localhost',
+#         'PORT': '1433',
+#         'OPTIONS': {
+#             'driver': 'ODBC Driver 17 for SQL Server',
+#             'extra_params': 'TrustServerCertificate=yes;',
+#         },
+#     }
+# }
 
 
 # Password validation

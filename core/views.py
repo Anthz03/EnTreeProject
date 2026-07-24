@@ -209,3 +209,9 @@ def delete_certification(request, cert_id):
     db_utils.delete_tesda_certificate(cert_id)
     messages.info(request, "Certification removed.")
     return redirect('profile_dashboard')
+
+
+@login_required_applicant
+def job_details_view(request, job_id):
+    job = db_utils.get_job_details(job_id)
+    return render(request, 'core/job_details.html', {'job': job})

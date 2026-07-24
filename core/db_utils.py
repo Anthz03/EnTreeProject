@@ -69,6 +69,11 @@ def create_job_post(employer_id, job_title, job_description, education_required,
         )
         return _dictfetchone(cursor)  # ResultStatus, JobID
 
+def get_job_details(job_id):
+    """EXEC uspViewJobDetails -- full job posting + employer details."""
+    with connection.cursor() as cursor:
+        cursor.execute("EXEC uspViewJobDetails @JobID=%s", [job_id])
+        return _dictfetchone(cursor)
 
 def get_matching_skills(applicant_id, job_id):
     """EXEC uspViewMatchingSkills -- two result sets: skills + summary."""
@@ -243,3 +248,6 @@ def get_applicant_certifications(applicant_id):
             [applicant_id]
         )
         return _dictfetchall(cursor)
+
+
+

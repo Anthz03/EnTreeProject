@@ -15,9 +15,14 @@
                 <span class="badge bg-success rounded-pill"><i class="bi bi-check2-circle"></i> Match</span>
             </div>
             <p class="text-secondary small mb-3">{{ m.Matched_Description|truncatechars:130 }}</p>
-            <a href="{% url 'match_detail' m.job_id %}" class="btn btn-success btn-sm">
-                <i class="bi bi-clipboard-check"></i> See Skill Breakdown
-            </a>
+            <div class="d-flex gap-2 mt-auto">
+                <a href="{% url 'job_details' m.job_id %}" class="btn btn-success btn-sm">
+                    <i class="bi bi-eye"></i> View Job Details
+                </a>
+                <a href="{% url 'match_detail' m.job_id %}" class="btn btn-outline-success btn-sm">
+                    <i class="bi bi-clipboard-check"></i> See Skill Breakdown
+                </a>
+            </div>
         </div>
     </div>
     {% empty %}
