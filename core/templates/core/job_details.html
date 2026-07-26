@@ -2,26 +2,26 @@
 {% block content %}
 
 <a href="{% url 'jobs_page' %}" class="text-muted small d-inline-block mb-3">
-    <i class="bi bi-arrow-left"></i> Back to Jobs
+    <i data-lucide="arrow-left"></i> Back to Jobs
 </a>
 
 {% if job %}
 <div class="card p-4 p-md-5">
-    <div class="d-flex justify-content-between align-items-start mb-3">
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-3">
         <div class="d-flex gap-3">
             <div class="employer-avatar">{{ job.employer_name|first }}</div>
             <div>
                 <h3 class="fw-bold mb-0">{{ job.job_title }}</h3>
                 <p class="text-muted mb-0">{{ job.employer_name }}</p>
-                <p class="text-muted small mb-0"><i class="bi bi-geo-alt"></i> {{ job.industry }}</p>
+                <p class="text-muted small mb-0"><i data-lucide="map-pin"></i> {{ job.industry }}</p>
             </div>
         </div>
-        <span class="badge {% if job.status == 'Open' %}badge-open{% else %}bg-secondary{% endif %} rounded-pill px-3 py-2">
+        <span class="badge {% if job.status == 'Open' %}badge-open{% else %}badge-neutral{% endif %} rounded-pill px-3 py-2">
             {{ job.AvailabilityLabel }}
         </span>
     </div>
 
-    <hr>
+    <hr style="border-color: var(--divider);">
 
     <h6 class="fw-bold mb-2">Job Description</h6>
     <p class="text-secondary">{{ job.job_description }}</p>
@@ -30,19 +30,19 @@
         <div class="col-md-4">
             <p class="text-muted small mb-1">Salary Range</p>
             <span class="badge badge-salary rounded-pill px-3 py-2">
-                <i class="bi bi-cash-coin"></i> ₱{{ job.salary_min|floatformat:0 }} - ₱{{ job.salary_max|floatformat:0 }}
+                <i data-lucide="banknote"></i> ₱{{ job.salary_min|floatformat:0 }} - ₱{{ job.salary_max|floatformat:0 }}
             </span>
         </div>
         <div class="col-md-4">
             <p class="text-muted small mb-1">Job Type</p>
-            <span class="badge bg-light text-dark border rounded-pill px-3 py-2">
-                <i class="bi bi-clock"></i> {{ job.job_type }}
+            <span class="badge badge-neutral rounded-pill px-3 py-2">
+                <i data-lucide="clock"></i> {{ job.job_type }}
             </span>
         </div>
         <div class="col-md-4">
             <p class="text-muted small mb-1">Education Required</p>
-            <span class="badge bg-light text-dark border rounded-pill px-3 py-2">
-                <i class="bi bi-mortarboard"></i> {{ job.education_required }}
+            <span class="badge badge-neutral rounded-pill px-3 py-2">
+                <i data-lucide="graduation-cap"></i> {{ job.education_required }}
             </span>
         </div>
     </div>
@@ -50,25 +50,25 @@
     {% if job.strand_required %}
     <div class="mt-3">
         <p class="text-muted small mb-1">Strand Required</p>
-        <span class="badge bg-light text-dark border rounded-pill px-3 py-2">{{ job.strand_required }}</span>
+        <span class="badge badge-neutral rounded-pill px-3 py-2">{{ job.strand_required }}</span>
     </div>
     {% endif %}
 
-    <hr class="mt-4">
+    <hr class="mt-4" style="border-color: var(--divider);">
 
     <h6 class="fw-bold mb-2">Employer Contact</h6>
-    <p class="text-secondary small mb-1"><i class="bi bi-telephone"></i> {{ job.employer_contact|default:"Not provided" }}</p>
-    <p class="text-secondary small mb-1"><i class="bi bi-envelope"></i> {{ job.employer_email|default:"Not provided" }}</p>
-    <p class="text-secondary small mb-3"><i class="bi bi-geo-alt"></i> {{ job.employer_address|default:"Not provided" }}</p>
+    <p class="text-secondary small mb-1"><i data-lucide="phone"></i> {{ job.employer_contact|default:"Not provided" }}</p>
+    <p class="text-secondary small mb-1"><i data-lucide="mail"></i> {{ job.employer_email|default:"Not provided" }}</p>
+    <p class="text-secondary small mb-3"><i data-lucide="map-pin"></i> {{ job.employer_address|default:"Not provided" }}</p>
 
     <a href="{% url 'match_detail' job.job_id %}" class="btn btn-success">
-        <i class="bi bi-graph-up-arrow"></i> Check My Skill Match
+        <i data-lucide="trending-up"></i> Check My Skill Match
     </a>
 </div>
 {% else %}
-<div class="text-center py-5">
-    <i class="bi bi-exclamation-circle" style="font-size: 2.5rem; color: #adb5bd;"></i>
-    <p class="text-muted mt-2">Job posting not found.</p>
+<div class="card empty-state">
+    <i data-lucide="alert-circle"></i>
+    <p class="mt-2 mb-0">Job posting not found.</p>
 </div>
 {% endif %}
 

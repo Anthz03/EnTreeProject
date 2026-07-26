@@ -15,6 +15,9 @@ def login_required_applicant(view_func):
 
 
 def login_view(request):
+    if request.session.get('applicant_id'):
+        return redirect('jobs_page')
+
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')

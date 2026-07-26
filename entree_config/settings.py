@@ -98,20 +98,20 @@ WSGI_APPLICATION = 'entree_config.wsgi.application'
 # }
 
 # abby database
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'mssql',
-#         'NAME': 'EnTreeDB_Finals',
-#         'USER': 'sa',
-#         'PASSWORD': '010611',
-#         'HOST': 'localhost',
-#         'PORT': '1433',
-#         'OPTIONS': {
-#             'driver': 'ODBC Driver 17 for SQL Server',
-#             'extra_params': 'TrustServerCertificate=yes;',
-#         },
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'mssql',
+        'NAME': 'EnTreeDB_Finals',
+        'USER': 'sa',
+        'PASSWORD': '010611',
+        'HOST': 'localhost',
+        'PORT': '1433',
+        'OPTIONS': {
+            'driver': 'ODBC Driver 17 for SQL Server',
+            'extra_params': 'TrustServerCertificate=yes;',
+        },
+    }
+}
 
 
 # Password validation

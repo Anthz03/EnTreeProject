@@ -1,7 +1,7 @@
 {% extends 'core/base.html' %}
 {% block content %}
 
-<div class="card p-4 p-md-5">
+<div class="card p-4 p-md-5" style="max-width: 640px; margin: 0 auto;">
     <h4 class="fw-bold mb-1">
         {% if mode == 'add' %}Add a Skill{% else %}Edit Skill{% endif %}
     </h4>
@@ -17,7 +17,7 @@
         {% csrf_token %}
 
         <div class="mb-3">
-            <label class="form-label small text-muted">Skill</label>
+            <label class="form-label">Skill</label>
             {% if mode == 'add' %}
                 <select name="skill_id" class="form-select" required>
                     <option value="" disabled selected>Select a skill...</option>
@@ -26,12 +26,12 @@
                     {% endfor %}
                 </select>
             {% else %}
-                <input type="text" class="form-control bg-light" value="{{ skill_record.skill_name }}" disabled>
+                <input type="text" class="form-control" value="{{ skill_record.skill_name }}" disabled>
             {% endif %}
         </div>
 
         <div class="mb-4">
-            <label class="form-label small text-muted">Description</label>
+            <label class="form-label">Description</label>
             <textarea
                 name="description"
                 class="form-control w-100"
@@ -42,10 +42,10 @@
 
         <div class="d-flex justify-content-between align-items-center">
             <a href="{% url 'profile_dashboard' %}" class="text-muted small">
-                <i class="bi bi-arrow-left"></i> Back to Profile
+                <i data-lucide="arrow-left"></i> Back to Profile
             </a>
             <button type="submit" class="btn btn-success px-4">
-                <i class="bi bi-check-lg"></i> Done
+                <i data-lucide="check"></i> Done
             </button>
         </div>
     </form>

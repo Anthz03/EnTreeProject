@@ -1,25 +1,164 @@
 {% extends 'core/base.html' %}
+{% load static %}
+{% block main_class %}shell-full{% endblock %}
+{% block body_class %}login-page{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'core/css/login.css' %}">
+{% endblock %}
+
 {% block content %}
-<div class="row justify-content-center align-items-center" style="min-height: 70vh;">
-    <div class="col-md-4">
-        <div class="text-center mb-4">
-            <h3 class="fw-bold text-success">Welcome to EnTree</h3>
-            <p class="text-muted small">Skills-first job matching for entry-level talent</p>
-        </div>
-        <div class="card p-4">
+
+<div class="login-shell">
+
+    <div class="login-form-panel">
+        <div class="login-form-card">
+            <div class="login-logo">
+                <span class="logo-mark">E</span> EnTree
+            </div>
+
+            <h1 class="fw-bold">Log In</h1>
+            <p class="login-sub">Welcome back! Please login your account.</p>
+
             <form method="post">
                 {% csrf_token %}
-                <div class="mb-3">
-                    <label class="form-label small text-muted">Email</label>
+                <div class="login-input-group">
+                    <i data-lucide="mail"></i>
                     <input type="email" name="email" class="form-control" placeholder="you@email.com" required>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label small text-muted">Password</label>
+                <div class="login-input-group">
+                    <i data-lucide="lock"></i>
                     <input type="password" name="password" class="form-control" placeholder="••••••••" required>
                 </div>
-                <button type="submit" class="btn btn-success w-100 py-2">Log In</button>
+                <button type="submit" class="btn btn-success login-submit">
+                    <i data-lucide="log-in"></i> Log In
+                </button>
             </form>
+
+            <p class="login-footnote">Forgot you password?</p>
         </div>
     </div>
+
+    <div class="login-visual-panel" id="growthPanel">
+        <div class="growth-scene" id="growthScene">
+
+            <div class="growth-illustration" id="growthIllustration">
+                <video
+                    id="growthVideo"
+                    class="growth-video"
+                    poster="{% static 'core/video/boy-under-social-tree-poster.jpg' %}"
+                    autoplay
+                    loop
+                    muted
+                    playsinline
+                    preload="auto"
+                    aria-label="Illustration of a boy reading under a tree"
+                >
+                    <source src="{% static 'core/video/boy-under-social-tree.mp4' %}" type="video/mp4">
+                </video>
+            </div>
+
+            <div class="growth-card card-pos-1">
+                <span class="icon-chip"><i data-lucide="briefcase"></i></span>
+                <div>
+                    <p class="growth-card-title">Open Positions</p>
+                    <p class="growth-card-sub">New Opportunities</p>
+                </div>
+            </div>
+
+            <div class="growth-card card-pos-2">
+                <span class="icon-chip"><i data-lucide="trending-up"></i></span>
+                <div>
+                    <p class="growth-card-title">Skill Match</p>
+                    <p class="growth-card-sub">See how you compare</p>
+                </div>
+            </div>
+
+            <div class="growth-card card-pos-3">
+                <span class="icon-chip"><i data-lucide="award"></i></span>
+                <div>
+                    <p class="growth-card-title">Certifications</p>
+                    <p class="growth-card-sub">Track your credentials</p>
+                </div>
+            </div>
+
+            <div class="growth-card card-pos-4">
+                <span class="icon-chip"><i data-lucide="check-circle"></i></span>
+                <div>
+                    <p class="growth-card-title">Interview Ready</p>
+                    <p class="growth-card-sub">Know where you stand</p>
+                </div>
+            </div>
+
+        </div>
+
+
+            <p class="growth-tagline">Enter Through Skills. <span class="highlight">Let Your Career Take Root.</span></p>
+        </div>
+    </div>
+
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+(function () {
+    const scene = document.getElementById('growthScene');
+    const panel = document.getElementById('growthPanel');
+    const video = document.getElementById('growthVideo');
+    if (!scene || !panel) return;
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // ---- Video: boy under tree ----
+    if (video) {
+        // Fade in smoothly once the first frame is actually paintable, instead of popping in.
+        video.addEventListener('loadeddata', function () {
+            video.classList.add('is-ready');
+        });
+
+        // If the file fails to load, fall back to just the poster frame rather than a blank box.
+        video.addEventListener('error', function () {
+            video.classList.add('is-ready', 'video-fallback');
+        });
+
+        if (reduceMotion) {
+            video.removeAttribute('autoplay');
+            video.pause();
+            video.classList.add('is-ready');
+        }
+    }
+
+    // Pause the video while the tab is hidden — keeps things smooth when the user comes back
+    // instead of it having drifted, and saves battery/CPU in the background.
+    document.addEventListener('visibilitychange', function () {
+        const hidden = document.hidden;
+        scene.classList.toggle('motion-paused', hidden);
+        if (video && !reduceMotion) {
+            hidden ? video.pause() : video.play().catch(function () {});
+        }
+    });
+
+    // Subtle parallax: the whole scene (illustration + cards) shifts together, max 8px.
+    if (!reduceMotion && window.matchMedia('(pointer: fine)').matches) {
+        let raf = null;
+        panel.addEventListener('mousemove', function (e) {
+            const rect = panel.getBoundingClientRect();
+            const relX = (e.clientX - rect.left) / rect.width - 0.5;
+            const relY = (e.clientY - rect.top) / rect.height - 0.5;
+            const maxShift = 8;
+
+            if (raf) cancelAnimationFrame(raf);
+            raf = requestAnimationFrame(function () {
+                scene.style.transform =
+                    'translate3d(' + (relX * maxShift).toFixed(2) + 'px,' + (relY * maxShift).toFixed(2) + 'px,0)';
+            });
+        });
+
+        panel.addEventListener('mouseleave', function () {
+            scene.style.transform = 'translate3d(0,0,0)';
+        });
+    }
+})();
+</script>
 {% endblock %}

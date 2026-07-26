@@ -1,76 +1,93 @@
 {% extends 'core/base.html' %}
 {% block content %}
 
-<div class="p-4 mb-4 rounded-4 text-white" style="background: linear-gradient(120deg, #2d6a4f, #40916c);">
-    <h3 class="fw-bold mb-1">Find your next opportunity</h3>
-    <p class="mb-0 opacity-75">Browse open roles across households and small businesses near you.</p>
+<div class="hero-card mb-4">
+    <div class="hero-copy">
+        <h1>Find your next opportunity</h1>
+        <p>Browse open roles across households and small businesses near you.</p>
+        <a href="#job-results" class="btn btn-success">
+            Browse Jobs <i data-lucide="arrow-right"></i>
+        </a>
+    </div>
+    <div class="hero-illustration">
+        <div class="ill-float f1"><i data-lucide="search"></i></div>
+        <div class="ill-badge"><i data-lucide="briefcase"></i></div>
+        <div class="ill-float f2"><i data-lucide="trending-up"></i></div>
+        <div class="ill-float f3"><i data-lucide="sprout"></i></div>
+    </div>
 </div>
 
-<form method="get" class="row g-2 mb-4 align-items-end">
-    <div class="col-md-3">
-        <label class="form-label small text-muted">Min Salary</label>
-        <input type="number" step="0.01" name="min_salary" value="{{ min_salary }}" class="form-control" placeholder="₱ 0">
-    </div>
-    <div class="col-md-3">
-        <label class="form-label small text-muted">Max Salary</label>
-        <input type="number" step="0.01" name="max_salary" value="{{ max_salary }}" class="form-control" placeholder="₱ 50,000">
-    </div>
-    <div class="col-md-3">
-        <label class="form-label small text-muted">Industry</label>
-        <input type="text" name="industry" value="{{ industry }}" class="form-control" placeholder="e.g. Food, Construction">
-    </div>
-    <div class="col-md-3">
-        <button type="submit" class="btn btn-success w-100"><i class="bi bi-search"></i> Search</button>
-    </div>
-</form>
+<div class="search-card mb-4">
+    <form method="get" class="row g-3 align-items-end">
+        <div class="col-sm-6 col-md-3">
+            <label class="form-label">Min Salary</label>
+            <input type="number" step="0.01" name="min_salary" value="{{ min_salary }}" class="form-control" placeholder="₱ 0">
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <label class="form-label">Max Salary</label>
+            <input type="number" step="0.01" name="max_salary" value="{{ max_salary }}" class="form-control" placeholder="₱ 50,000">
+        </div>
+        <div class="col-sm-6 col-md-4">
+            <label class="form-label">Industry</label>
+            <input type="text" name="industry" value="{{ industry }}" class="form-control" placeholder="e.g. Food, Construction">
+        </div>
+        <div class="col-sm-6 col-md-2">
+            <button type="submit" class="btn btn-success w-100"><i data-lucide="search"></i> Search</button>
+        </div>
+    </form>
+</div>
 
-<p class="text-muted small mb-3">{{ jobs|length }} open position{{ jobs|length|pluralize }}</p>
+<div id="job-results">
+    <p class="text-muted small mb-3">{{ jobs|length }} open position{{ jobs|length|pluralize }}</p>
 
-<div class="row g-3">
-    {% for job in jobs %}
-    <div class="col-md-6">
-        <div class="card p-4 h-100">
-            <div class="d-flex justify-content-between align-items-start">
-                <div class="d-flex gap-3">
-                    <div class="employer-avatar">{{ job.employer_name|first }}</div>
-                    <div>
-                        <h5 class="mb-0">{{ job.job_title }}</h5>
-                        <p class="text-muted small mb-0">{{ job.employer_name }}</p>
-                        <p class="text-muted small mb-0"><i class="bi bi-geo-alt"></i> {{ job.industry|default:"General" }}</p>
+    <div class="row g-3">
+        {% for job in jobs %}
+        <div class="col-md-6">
+            <div class="card job-card p-4 h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="d-flex gap-3">
+                        <div class="employer-avatar">{{ job.employer_name|first }}</div>
+                        <div>
+                            <h5 class="mb-0">{{ job.job_title }}</h5>
+                            <p class="text-muted small mb-0">{{ job.employer_name }}</p>
+                            <p class="text-muted small mb-0"><i data-lucide="map-pin"></i> {{ job.industry|default:"General" }}</p>
+                        </div>
                     </div>
+                    <span class="badge badge-open rounded-pill px-3 py-2">Open</span>
                 </div>
-                <span class="badge badge-open rounded-pill px-3 py-2">Open</span>
-            </div>
 
-            <p class="mt-3 mb-3 text-secondary" style="min-height: 48px;">{{ job.job_description|truncatechars:110 }}</p>
+                <p class="mt-3 mb-3 text-secondary" style="min-height: 48px;">{{ job.job_description|truncatechars:110 }}</p>
 
-            <div class="d-flex flex-wrap gap-2 mb-4">
-                <span class="badge badge-salary rounded-pill px-3 py-2">
-                    <i class="bi bi-cash-coin"></i> ₱{{ job.salary_min|floatformat:0 }} - ₱{{ job.salary_max|floatformat:0 }}
-                </span>
-                <span class="badge bg-light text-dark border rounded-pill px-3 py-2">
-                    <i class="bi bi-clock"></i> {{ job.job_type }}
-                </span>
-                <span class="badge bg-light text-dark border rounded-pill px-3 py-2">
-                    <i class="bi bi-mortarboard"></i> {{ job.education_required }}
-                </span>
-            </div>
+                <div class="d-flex flex-wrap gap-2 mb-4">
+                    <span class="badge badge-salary rounded-pill px-3 py-2">
+                        <i data-lucide="banknote"></i> ₱{{ job.salary_min|floatformat:0 }} - ₱{{ job.salary_max|floatformat:0 }}
+                    </span>
+                    <span class="badge badge-neutral rounded-pill px-3 py-2">
+                        <i data-lucide="clock"></i> {{ job.job_type }}
+                    </span>
+                    <span class="badge badge-neutral rounded-pill px-3 py-2">
+                        <i data-lucide="graduation-cap"></i> {{ job.education_required }}
+                    </span>
+                </div>
 
-            <div class="d-flex gap-3 mt-auto">
-                <a href="{% url 'job_details' job.job_id %}" class="btn btn-success">
-                    <i class="bi bi-eye"></i> View Job Details
-                </a>
-                <a href="{% url 'match_detail' job.job_id %}" class="btn btn-outline-success">
-                    <i class="bi bi-graph-up-arrow"></i> Check My Skill Match
-                </a>
+                <div class="d-flex flex-wrap gap-2 mt-auto">
+                    <a href="{% url 'job_details' job.job_id %}" class="btn btn-success btn-sm">
+                        <i data-lucide="eye"></i> View Job Details
+                    </a>
+                    <a href="{% url 'match_detail' job.job_id %}" class="btn btn-outline-success btn-sm">
+                        <i data-lucide="trending-up"></i> Check My Skill Match
+                    </a>
+                </div>
             </div>
         </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="card empty-state">
+                <i data-lucide="inbox"></i>
+                <p class="mt-2 mb-0">No job postings match your filters.</p>
+            </div>
+        </div>
+        {% endfor %}
     </div>
-    {% empty %}
-    <div class="col-12 text-center py-5">
-        <i class="bi bi-inbox" style="font-size: 2.5rem; color: #adb5bd;"></i>
-        <p class="text-muted mt-2">No job postings match your filters.</p>
-    </div>
-    {% endfor %}
 </div>
 {% endblock %}

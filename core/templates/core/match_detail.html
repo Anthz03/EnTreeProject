@@ -1,13 +1,13 @@
 {% extends 'core/base.html' %}
 {% block content %}
 
-<a href="{% url 'jobs_page' %}" class="text-muted small"><i class="bi bi-arrow-left"></i> Back to Jobs</a>
+<a href="{% url 'jobs_page' %}" class="text-muted small"><i data-lucide="arrow-left"></i> Back to Jobs</a>
 
 <div class="card p-4 mt-3 mb-4">
     <h3 class="fw-bold mb-1">Skill Match — Job #{{ job_id }}</h3>
     {% if summary %}
     <div class="d-flex align-items-center gap-2 mt-2">
-        <span class="badge bg-success rounded-pill px-3 py-2" style="font-size: 0.95rem;">
+        <span class="badge badge-match rounded-pill px-3 py-2" style="font-size: 0.95rem;">
             {{ summary.TotalMatchedSkills }} skill{{ summary.TotalMatchedSkills|pluralize }} matched
         </span>
     </div>
@@ -17,21 +17,25 @@
 <div class="row g-3">
     {% for s in skills %}
     <div class="col-md-6">
-        <div class="card p-3 d-flex flex-row justify-content-between align-items-center
-            {% if s.MatchStatus == 'Matched' %}border-start border-4 border-success{% else %}border-start border-4 border-secondary{% endif %}">
+        <div class="card p-3 d-flex flex-row justify-content-between align-items-center">
             <div>
                 <h6 class="mb-1">{{ s.skill_name }}</h6>
                 <p class="text-muted small mb-0">{{ s.skill_type }} &middot; {{ s.is_required }}</p>
             </div>
             {% if s.MatchStatus == 'Matched' %}
-                <span class="badge bg-success rounded-pill px-3 py-2"><i class="bi bi-check-lg"></i> Matched</span>
+                <span class="badge badge-match rounded-pill px-3 py-2"><i data-lucide="check"></i> Matched</span>
             {% else %}
-                <span class="badge bg-secondary rounded-pill px-3 py-2"><i class="bi bi-dash-circle"></i> Missing</span>
+                <span class="badge badge-missing rounded-pill px-3 py-2"><i data-lucide="minus-circle"></i> Missing</span>
             {% endif %}
         </div>
     </div>
     {% empty %}
-    <p class="text-muted">No skill requirements found for this job.</p>
+    <div class="col-12">
+        <div class="card empty-state">
+            <i data-lucide="clipboard-x"></i>
+            <p class="mt-2 mb-0">No skill requirements found for this job.</p>
+        </div>
+    </div>
     {% endfor %}
 </div>
 {% endblock %}
