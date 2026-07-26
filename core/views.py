@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.db import DatabaseError
 from decimal import Decimal, InvalidOperation
+from datetime import date, datetime
 from functools import wraps
 from . import db_utils
 
@@ -207,21 +208,52 @@ def delete_skill_view(request, applicant_skill_id):
 
 
 # TESDA Certifications: Add / Edit / Delete --------------------------------
+def _parse_date(value):
+    if not value:
+        return None
+    return datetime.strptime(value, '%Y-%m-%d').date()
+
+
+def _validate_cert_dates(date_issued_raw, expiry_date_raw):
+    """Mirrors usp_ManageTesdaCertification's date validation rules."""
+    date_issued = _parse_date(date_issued_raw)
+    expiry_date = _parse_date(expiry_date_raw)
+    today = date.today()
+
+    if date_issued and date_issued > today:
+        return "Date Issued cannot be in the future."
+    if expiry_date and date_issued and expiry_date <= date_issued:
+        return "Date Issued must be earlier than Expiry Date."
+    return None
+
 
 @login_required_applicant
 def add_certification_view(request):
     if request.method == 'POST':
         applicant_id = request.session['applicant_id']
-        db_utils.insert_tesda_certificate(
+        date_issued = request.POST.get('date_issued') or None
+        expiry_date = request.POST.get('expiry_date') or None
+
+        error = _validate_cert_dates(date_issued, expiry_date)
+        if error:
+            messages.error(request, error)
+            return render(request, 'core/certification_form.html', {
+                'mode': 'add', 'cert_record': None,
+            })
+
+        result = db_utils.insert_tesda_certificate(
             applicant_id,
             request.POST.get('qualification_title'),
             request.POST.get('nc_level'),
-            request.POST.get('date_issued') or None,
-            request.POST.get('expiry_date') or None,
+            date_issued,
+            expiry_date,
             request.POST.get('issuing_body'),
             request.POST.get('certificate_number'),
         )
-        messages.success(request, "Certification added.")
+        if result and result.get('ResultStatus') == 'Success':
+            messages.success(request, "Certification added.")
+        else:
+            messages.error(request, (result or {}).get('ErrorDetail', 'Could not add certification.'))
         return redirect('profile_dashboard')
 
     return render(request, 'core/certification_form.html', {
@@ -233,16 +265,30 @@ def add_certification_view(request):
 @login_required_applicant
 def edit_certification_view(request, cert_id):
     if request.method == 'POST':
-        db_utils.update_tesda_certificate(
+        date_issued = request.POST.get('date_issued') or None
+        expiry_date = request.POST.get('expiry_date') or None
+
+        error = _validate_cert_dates(date_issued, expiry_date)
+        if error:
+            messages.error(request, error)
+            cert_record = db_utils.get_tesda_certificate_detail(cert_id)
+            return render(request, 'core/certification_form.html', {
+                'mode': 'edit', 'cert_record': cert_record,
+            })
+
+        result = db_utils.update_tesda_certificate(
             cert_id,
             request.POST.get('qualification_title'),
             request.POST.get('nc_level'),
-            request.POST.get('date_issued') or None,
-            request.POST.get('expiry_date') or None,
+            date_issued,
+            expiry_date,
             request.POST.get('issuing_body'),
             request.POST.get('certificate_number'),
         )
-        messages.success(request, "Certification updated.")
+        if result and result.get('ResultStatus') == 'Success':
+            messages.success(request, "Certification updated.")
+        else:
+            messages.error(request, (result or {}).get('ErrorDetail', 'Could not update certification.'))
         return redirect('profile_dashboard')
 
     cert_record = db_utils.get_tesda_certificate_detail(cert_id)

@@ -25,23 +25,37 @@
 
         <div class="mb-3">
             <label class="form-label">NC Level</label>
-            <input type="text" name="nc_level" class="form-control"
-                   value="{% if mode == 'edit' %}{{ cert_record.nc_level }}{% endif %}"
-                   placeholder="e.g. NC II">
+            <select name="nc_level" class="form-select" required>
+                <option value="" disabled {% if mode == 'add' %}selected{% endif %}>Select NC Level</option>
+                <option value="NC I" {% if cert_record.nc_level == 'NC I' %}selected{% endif %}>NC I</option>
+                <option value="NC II" {% if cert_record.nc_level == 'NC II' %}selected{% endif %}>NC II</option>
+                <option value="NC III" {% if cert_record.nc_level == 'NC III' %}selected{% endif %}>NC III</option>
+                <option value="NC IV" {% if cert_record.nc_level == 'NC IV' %}selected{% endif %}>NC IV</option>
+            </select>
         </div>
 
         <div class="row g-3 mb-3">
-            <div class="col-md-6">
-                <label class="form-label">Date Issued</label>
-                <input type="date" name="date_issued" class="form-control"
-                       value="{% if mode == 'edit' %}{{ cert_record.date_issued|date:'Y-m-d' }}{% endif %}">
-            </div>
-            <div class="col-md-6">
-                <label class="form-label">Expiry Date</label>
-                <input type="date" name="expiry_date" class="form-control"
-                       value="{% if mode == 'edit' %}{{ cert_record.expiry_date|date:'Y-m-d' }}{% endif %}">
-            </div>
-        </div>
+    <div class="col-md-6">
+        <label class="form-label small text-muted">Date Issued</label>
+        <input type="date" name="date_issued" id="date_issued" class="form-control"
+               max="{% now 'Y-m-d' %}"
+               value="{% if mode == 'edit' %}{{ cert_record.date_issued|date:'Y-m-d' }}{% endif %}">
+        <div class="form-text small text-muted">Cannot be a future date.</div>
+    </div>
+
+   <div class="col-md-6">
+        <label class="form-label small text-muted">Expiry Date</label>
+        <input type="date" name="expiry_date" id="expiry_date" class="form-control"
+               value="{% if mode == 'edit' %}{{ cert_record.expiry_date|date:'Y-m-d' }}{% endif %}">
+        <div class="form-text small text-muted">Must be after Date Issued.</div>
+   </div>
+
+    <script>
+        // Keep Expiry Date's minimum in sync with whatever Date Issued is set to
+        document.getElementById('date_issued').addEventListener('change', function() {
+            document.getElementById('expiry_date').min = this.value;
+        });
+    </script>
 
         <div class="mb-3">
             <label class="form-label">Issuing Body</label>
