@@ -1,7 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.db import DatabaseError
+from decimal import Decimal, InvalidOperation
 from functools import wraps
 from . import db_utils
+
+MAX_SALARY = Decimal('99999999.99')  # matches DECIMAL(10,2) column limit
+
 
 
 def login_required_applicant(view_func):
@@ -38,20 +43,54 @@ def logout_view(request):
 
 @login_required_applicant
 def jobs_page(request):
-    min_salary = request.GET.get('min_salary') or None
-    max_salary = request.GET.get('max_salary') or None
+    min_salary_raw = request.GET.get('min_salary') or None
+    max_salary_raw = request.GET.get('max_salary') or None
     industry = request.GET.get('industry') or None
 
-    if min_salary or max_salary or industry:
-        jobs = db_utils.filter_job_postings(min_salary, max_salary, industry)
-    else:
-        jobs = db_utils.get_all_job_postings()
+    min_salary, max_salary = None, None
+    validation_failed = False
+
+    for label, raw_value in [('Min salary', min_salary_raw), ('Max salary', max_salary_raw)]:
+        if raw_value:
+            try:
+                value = Decimal(raw_value)
+                if value < 0:
+                    messages.error(request, f"{label} cannot be negative.")
+                    validation_failed = True
+                elif value > MAX_SALARY:
+                    messages.error(request, f"{label} is too large. Maximum allowed is ₱{MAX_SALARY:,.2f}.")
+                    validation_failed = True
+                elif label == 'Min salary':
+                    min_salary = value
+                else:
+                    max_salary = value
+            except InvalidOperation:
+                messages.error(request, f"{label} must be a valid number.")
+                validation_failed = True
+
+    if validation_failed:
+        return render(request, 'core/jobs_page.html', {
+            'jobs': [],
+            'min_salary': min_salary_raw or '',
+            'max_salary': max_salary_raw or '',
+            'industry': industry or '',
+        })
+
+    try:
+        if min_salary or max_salary or industry:
+            jobs = db_utils.filter_job_postings(min_salary, max_salary, industry)
+        else:
+            jobs = db_utils.get_all_job_postings()
+    except DatabaseError:
+        messages.error(request, "There was a problem loading job postings. Please check your filter values.")
+        jobs = []
 
     return render(request, 'core/jobs_page.html', {
-        'jobs': jobs, 'min_salary': min_salary or '',
-        'max_salary': max_salary or '', 'industry': industry or '',
+        'jobs': jobs,
+        'min_salary': min_salary_raw or '',
+        'max_salary': max_salary_raw or '',
+        'industry': industry or '',
     })
-
 
 @login_required_applicant
 def matches_page(request):
@@ -86,6 +125,12 @@ def profile_dashboard(request):
 def update_profile(request):
     if request.method == 'POST':
         applicant_id = request.session['applicant_id']
+        password = request.POST.get('password', '')
+
+        if len(password) < 8 or len(password) > 20:
+            messages.error(request, "Password must be between 8 and 20 characters.")
+            return redirect('profile_dashboard')
+
         result = db_utils.update_applicant(
             applicant_id,
             request.POST.get('education_id') or None,
@@ -94,7 +139,7 @@ def update_profile(request):
             request.POST.get('gender'), request.POST.get('contact_number'),
             request.POST.get('email'), request.POST.get('address'),
             request.POST.get('profile_status', 'Active'),
-            request.POST.get('password'),
+            password,
         )
         if result and result.get('ResultStatus') == 'Success':
             messages.success(request, "Profile updated.")

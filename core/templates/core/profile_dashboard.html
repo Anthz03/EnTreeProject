@@ -59,7 +59,10 @@
                         </div>
                         <div class="col-12">
                             <label class="form-label">Password</label>
-                            <input type="password" name="password" class="form-control" value="{{ profile.password }}">
+                            <input type="password" name="password" class="form-control"
+                                   value="{{ profile.password }}"
+                                   minlength="8" maxlength="20" required>
+                            <div class="form-text small text-muted">Password must be 8–20 characters.</div>
                         </div>
                     </div>
                 </fieldset>
