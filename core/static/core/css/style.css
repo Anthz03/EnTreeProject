@@ -591,6 +591,10 @@ textarea.form-control { height: auto; }
   font-weight: 700;
   flex-shrink: 0;
 }
+.employer-avatar-photo {
+  object-fit: cover;
+  border: 1px solid var(--border);
+}
 
 /* ---------------- Skill row ---------------- */
 

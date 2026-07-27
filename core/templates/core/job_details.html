@@ -1,4 +1,5 @@
 {% extends 'core/base.html' %}
+{% load static %}
 {% block content %}
 
 <a href="{% url 'jobs_page' %}" class="text-muted small d-inline-block mb-3">
@@ -9,7 +10,13 @@
 <div class="card p-4 p-md-5">
     <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-3">
         <div class="d-flex gap-3">
+            {% if job.employer_name|lower|slice:":18" == "april abegail chiu" %}
+            <img class="employer-avatar employer-avatar-photo" src="{% static 'core/img/employer-april.jpg' %}" alt="{{ job.employer_name }}">
+            {% elif job.employer_name|lower|slice:":21" == "kyle anthony magalona" %}
+            <img class="employer-avatar employer-avatar-photo" src="{% static 'core/img/employer-kyle.jpg' %}" alt="{{ job.employer_name }}">
+            {% else %}
             <div class="employer-avatar">{{ job.employer_name|first }}</div>
+            {% endif %}
             <div>
                 <h3 class="fw-bold mb-0">{{ job.job_title }}</h3>
                 <p class="text-muted mb-0">{{ job.employer_name }}</p>
