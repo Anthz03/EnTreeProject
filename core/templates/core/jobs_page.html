@@ -55,6 +55,12 @@
                         <img class="employer-avatar employer-avatar-photo" src="{% static 'core/img/employer-april.jpg' %}" alt="{{ job.employer_name }}">
                         {% elif job.employer_name|lower|slice:":21" == "kyle anthony magalona" %}
                         <img class="employer-avatar employer-avatar-photo" src="{% static 'core/img/employer-kyle.jpg' %}" alt="{{ job.employer_name }}">
+                        {% elif job.employer_name|lower|slice:":18" == "karl david mamauag" %}
+                        <img class="employer-avatar employer-avatar-photo" src="{% static 'core/img/employer-karl.jpg' %}" alt="{{ job.employer_name }}">
+                        {% elif job.employer_name|lower|slice:":15" == "josiah espirutu" %}
+                        <img class="employer-avatar employer-avatar-photo" src="{% static 'core/img/employer-josiah.jpg' %}" alt="{{ job.employer_name }}">
+                        {% elif job.employer_name|lower|slice:":8" == "joed goh" %}
+                        <img class="employer-avatar employer-avatar-photo" src="{% static 'core/img/employer-joed.jpg' %}" alt="{{ job.employer_name }}">
                         {% else %}
                         <div class="employer-avatar">{{ job.employer_name|first }}</div>
                         {% endif %}
