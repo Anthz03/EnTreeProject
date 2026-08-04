@@ -78,7 +78,10 @@ def jobs_page(request):
         })
 
     try:
-        if min_salary or max_salary or industry:
+        if min_salary and max_salary and min_salary > max_salary:
+            messages.warning(request, "Minimum salary is greater than maximum salary — no jobs will match this range.")
+            jobs = []
+        elif min_salary or max_salary or industry:
             jobs = db_utils.filter_job_postings(min_salary, max_salary, industry)
         else:
             jobs = db_utils.get_all_job_postings()
@@ -127,16 +130,23 @@ def update_profile(request):
     if request.method == 'POST':
         applicant_id = request.session['applicant_id']
         password = request.POST.get('password', '')
+        birthdate_str = request.POST.get('birthdate') or None
 
         if len(password) < 8 or len(password) > 20:
             messages.error(request, "Password must be between 8 and 20 characters.")
             return redirect('profile_dashboard')
 
+        if birthdate_str:
+            birthdate = datetime.strptime(birthdate_str, '%Y-%m-%d').date()
+            if birthdate > date.today():
+                messages.error(request, "Birthdate cannot be a future date.")
+                return redirect('profile_dashboard')
+
         result = db_utils.update_applicant(
             applicant_id,
             request.POST.get('education_id') or None,
             request.POST.get('first_name'), request.POST.get('last_name'),
-            request.POST.get('middle_name'), request.POST.get('birthdate') or None,
+            request.POST.get('middle_name'),birthdate_str,
             request.POST.get('gender'), request.POST.get('contact_number'),
             request.POST.get('email'), request.POST.get('address'),
             request.POST.get('profile_status', 'Active'),
@@ -149,12 +159,6 @@ def update_profile(request):
     return redirect('profile_dashboard')
 
 
-@login_required_applicant
-def delete_profile(request):
-    applicant_id = request.session['applicant_id']
-    db_utils.delete_applicant(applicant_id)
-    request.session.flush()
-    return redirect('login')
 
 
 # Applicant Skills: Add / Edit / Delete -----------------------------------

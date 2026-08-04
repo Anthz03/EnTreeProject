@@ -35,7 +35,9 @@
                         </div>
                         <div class="col-6">
                             <label class="form-label">Birthdate</label>
-                            <input type="date" name="birthdate" class="form-control" value="{{ profile.birthdate|date:'Y-m-d' }}">
+                            <input type="date" name="birthdate" class="form-control"
+                               max="{% now 'Y-m-d' %}"
+                               value="{{ profile.birthdate|date:'Y-m-d' }}">
                         </div>
                         <div class="col-6">
                             <label class="form-label">Gender</label>
@@ -43,7 +45,8 @@
                         </div>
                         <div class="col-6">
                             <label class="form-label">Contact Number</label>
-                            <input type="text" name="contact_number" class="form-control" value="{{ profile.contact_number }}">
+                            <input type="text" name="contact_number" class="form-control" value="{{ profile.contact_number }}"
+                                maxlength="11">
                         </div>
                         <div class="col-6">
                             <label class="form-label">Status</label>

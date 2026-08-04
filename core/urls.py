@@ -12,7 +12,6 @@ urlpatterns = [
 
     path('profile/', views.profile_dashboard, name='profile_dashboard'),
     path('profile/update/', views.update_profile, name='update_profile'),
-    path('profile/delete/', views.delete_profile, name='delete_profile'),
 
     path('profile/certifications/add/', views.add_certification_view, name='add_certification'),
     path('profile/certifications/<int:cert_id>/edit/', views.edit_certification_view, name='edit_certification'),
