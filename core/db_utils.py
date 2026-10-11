@@ -50,24 +50,6 @@ def filter_job_postings(min_salary=None, max_salary=None, industry=None):
         return _dictfetchall(cursor)
 
 
-def create_job_post(employer_id, job_title, job_description, education_required,
-                     strand_required, salary_min, salary_max, job_type,
-                     skill_ids_csv, is_required='Required'):
-    """EXEC uspCreateJobPost"""
-    with connection.cursor() as cursor:
-        cursor.execute(
-            """
-            EXEC uspCreateJobPost
-                @EmployerID=%s, @JobTitle=%s, @JobDescription=%s,
-                @EducationRequired=%s, @StrandRequired=%s,
-                @SalaryMin=%s, @SalaryMax=%s, @JobType=%s,
-                @SkillIDs=%s, @IsRequired=%s
-            """,
-            [employer_id, job_title, job_description, education_required,
-             strand_required, salary_min, salary_max, job_type,
-             skill_ids_csv, is_required]
-        )
-        return _dictfetchone(cursor)  # ResultStatus, JobID
 
 def get_job_details(job_id):
     """EXEC uspViewJobDetails -- full job posting + employer details."""
@@ -158,15 +140,11 @@ def get_applicant_profile(applicant_id):
 
 
 def get_applicant_skills(applicant_id):
+    """EXEC usp_GetApplicantSkills"""
     with connection.cursor() as cursor:
         cursor.execute(
-            """
-            SELECT aps.applicant_skill_id, aps.description, aps.date_added,
-                   s.skill_id, s.skill_name, s.skill_type, s.category
-            FROM Applicant_Skills aps
-            INNER JOIN Skills s ON aps.skill_id = s.skill_id
-            WHERE aps.applicant_id = %s
-            """, [applicant_id]
+            "EXEC uspGetApplicantSkills @ApplicantID = %s",
+            [applicant_id]
         )
         return _dictfetchall(cursor)
 

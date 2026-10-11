@@ -89,15 +89,12 @@ DATABASES = {
     'default': {
         'ENGINE': 'mssql',
         'NAME': 'EnTreeDB_Finals',
-        'USER': 'sa',
-        'PASSWORD': 'Torriokyle31@',
         'HOST': 'localhost',
-        'PORT': '1433',
         'OPTIONS': {
             'driver': 'ODBC Driver 17 for SQL Server',
-            'extra_params': 'TrustServerCertificate=yes;',
+            'Trusted_Connection': 'yes',
         },
-    }
+    },
 }
 
 # abby database
