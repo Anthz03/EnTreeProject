@@ -1,0 +1,138 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}EnTree — Grow your career{% endblock %}
+{% block main_class %}shell-full{% endblock %}
+{% block body_class %}landing-page{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'core/css/landing.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<header class="lp-nav" id="lpNav">
+    <div class="lp-container lp-nav-inner">
+        <a class="lp-logo" href="{% url 'landing' %}"><span class="logo-mark">E</span> EnTree</a>
+        <nav class="lp-links">
+            <a href="#how">How it works</a>
+            <a href="#features">Features</a>
+            <a href="#team">Developers</a>
+        </nav>
+        <a href="{% url 'login' %}" class="btn btn-success lp-cta-sm">Log in</a>
+    </div>
+</header>
+
+<section class="lp-hero">
+    <div class="lp-container lp-hero-grid">
+        <div class="lp-hero-copy reveal">
+            <span class="lp-pill"><i data-lucide="sprout"></i> Job matching built around your skills</span>
+            <h1>Find work that fits<br>what you <em>can do</em>.</h1>
+            <p class="lp-lead">EnTree matches you to open positions using your skills and TESDA certifications, so you spend less time searching and more time growing.</p>
+            <div class="lp-actions">
+                <a href="{% url 'login' %}" class="btn btn-success lp-cta">Get started <i data-lucide="arrow-right"></i></a>
+                <a href="#how" class="lp-ghost">See how it works</a>
+            </div>
+        </div>
+
+        <div class="lp-hero-visual reveal">
+            <div class="lp-video-wrap">
+                <video class="lp-video" autoplay loop muted playsinline preload="auto"
+                       aria-label="Illustration of a boy reading under a tree">
+                    <source src="{% static 'core/video/boy-under-social-tree.mp4' %}" type="video/mp4">
+                </video>
+            </div>
+            <div class="lp-float lp-float-1"><span class="icon-chip"><i data-lucide="briefcase"></i></span><div><b>Open Positions</b><small>New opportunities</small></div></div>
+            <div class="lp-float lp-float-2"><span class="icon-chip"><i data-lucide="trending-up"></i></span><div><b>Skill Match</b><small>See how you compare</small></div></div>
+        </div>
+    </div>
+</section>
+
+<section class="lp-section" id="how">
+    <div class="lp-container">
+        <div class="lp-head reveal">
+            <span class="lp-eyebrow">How it works</span>
+            <h2>Three steps to your next role</h2>
+        </div>
+        <div class="lp-steps">
+            <article class="lp-step reveal">
+                <span class="lp-num">1</span>
+                <span class="icon-chip"><i data-lucide="user-round"></i></span>
+                <h3>Build your profile</h3>
+                <p>Add your skills and proficiency levels so employers see what you bring.</p>
+            </article>
+            <article class="lp-step reveal">
+                <span class="lp-num">2</span>
+                <span class="icon-chip"><i data-lucide="award"></i></span>
+                <h3>Add certifications</h3>
+                <p>Record your TESDA certificates to back up your skills with proof.</p>
+            </article>
+            <article class="lp-step reveal">
+                <span class="lp-num">3</span>
+                <span class="icon-chip"><i data-lucide="sparkles"></i></span>
+                <h3>Get matched</h3>
+                <p>See jobs ranked by how well you fit, and what skills to build next.</p>
+            </article>
+        </div>
+    </div>
+</section>
+
+<section class="lp-section lp-alt" id="features">
+    <div class="lp-container">
+        <div class="lp-head reveal">
+            <span class="lp-eyebrow">Features</span>
+            <h2>Everything you need to apply with confidence</h2>
+        </div>
+        <div class="lp-features">
+            <div class="lp-feature reveal"><i data-lucide="search"></i><h3>Browse &amp; filter jobs</h3><p>Filter by industry and salary range to find roles that suit you.</p></div>
+            <div class="lp-feature reveal"><i data-lucide="target"></i><h3>Match scores</h3><p>Understand your fit for each job and where your gaps are.</p></div>
+            <div class="lp-feature reveal"><i data-lucide="shield-check"></i><h3>Verified credentials</h3><p>Certifications are tracked with dates so your profile stays credible.</p></div>
+            <div class="lp-feature reveal"><i data-lucide="building-2"></i><h3>Real employers</h3><p>Every posting shows who is hiring, with full job details.</p></div>
+        </div>
+    </div>
+</section>
+
+<section class="lp-section" id="team">
+    <div class="lp-container">
+        <div class="lp-head reveal">
+            <span class="lp-eyebrow">Developers</span>
+            <h2>Here are the developers</h2>
+        </div>
+        <div class="lp-team">
+            {% for name, img in employers %}
+            <figure class="lp-person reveal">
+                <img src="{% static img %}" alt="{{ name }}" loading="lazy">
+                <figcaption>{{ name }}</figcaption>
+            </figure>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="lp-final">
+    <div class="lp-container reveal">
+        <h2>Ready to grow your career?</h2>
+        <p>Log in and see which jobs match you today.</p>
+        <a href="{% url 'login' %}" class="btn lp-cta-light">Log in to EnTree <i data-lucide="arrow-right"></i></a>
+    </div>
+</section>
+
+<footer class="lp-footer">
+    <div class="lp-container">
+        <span>© EnTree — INFODBM Final Project, Group 2 (BTIS3)</span>
+    </div>
+</footer>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    const lpNav = document.getElementById('lpNav');
+    const onScroll = () => lpNav.classList.toggle('is-scrolled', window.scrollY > 8);
+    window.addEventListener('scroll', onScroll); onScroll();
+
+    const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+{% endblock %}

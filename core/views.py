@@ -9,7 +9,7 @@ from . import db_utils
 MAX_SALARY = Decimal('99999999.99')  # matches DECIMAL(10,2) column limit
 
 
-
+#function wrapper
 def login_required_applicant(view_func):
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
@@ -18,6 +18,14 @@ def login_required_applicant(view_func):
             return redirect('login')
         return view_func(request, *args, **kwargs)
     return wrapper
+
+
+def landing_view(request):
+    if request.session.get('applicant_id'):
+        return redirect('jobs_page')
+    employers = [(n, f'core/img/employer-{n.lower()}.jpg')
+                 for n in ('April', 'Kyle', 'Karl', 'Josiah')]
+    return render(request, 'core/landing.html', {'employers': employers})
 
 
 def login_view(request):
