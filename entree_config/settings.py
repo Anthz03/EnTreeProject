@@ -85,27 +85,30 @@ WSGI_APPLICATION = 'entree_config.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 # #kyle database
-DATABASES = {
-    'default': {
-        'ENGINE': 'mssql',
-        'NAME': 'EnTreeDB_Finals',
-        'HOST': 'localhost',
-        'OPTIONS': {
-            'driver': 'ODBC Driver 17 for SQL Server',
-            'Trusted_Connection': 'yes',
-        },
-    },
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'mssql',
+#         'NAME': 'name',
+#         'USER': 'user',
+#         'PASSWORD': 'password',
+#         'HOST': 'host',
+#         'PORT': 'xxxx',
+#         'OPTIONS': {
+#             'driver': 'ODBC Driver 17 for SQL Server',
+#             'extra_params': 'TrustServerCertificate=yes;',
+#         },
+#     }
+# }
 
 # abby database
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'mssql',
-#         'NAME': 'EnTreeDB_Finals',
-#         'USER': 'sa',
-#         'PASSWORD': '010611',
-#         'HOST': 'localhost',
-#         'PORT': '1433',
+#         'NAME': 'name',
+#         'USER': 'user',
+#         'PASSWORD': 'password',
+#         'HOST': 'host',
+#         'PORT': 'xxxx',
 #         'OPTIONS': {
 #             'driver': 'ODBC Driver 17 for SQL Server',
 #             'extra_params': 'TrustServerCertificate=yes;',
